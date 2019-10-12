@@ -1,9 +1,12 @@
-﻿using System.Collections.Concurrent;
+﻿using LogEventArchiver.Models;
+
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace LogEventArchiver
 {
     public interface ILogEventDbImporter
     {
-        void Import(BlockingCollection<ServerEvent> events);
+        Task Import(BlockingCollection<ServerEvent> events);
     }
 }

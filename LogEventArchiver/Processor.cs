@@ -1,4 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using LogEventArchiver.Models;
+
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace LogEventArchiver
 {
@@ -17,8 +20,10 @@ namespace LogEventArchiver
         {
             BlockingCollection<ServerEvent> events = new BlockingCollection<ServerEvent>();
 
-            _reader.ReadAndParseAsync(events);
-            _importer.Import(events);
+            var readerTask = _reader.ReadAllEvents(events);
+            var importerTask = _importer.Import(events);
+
+            Task.WaitAll(readerTask, importerTask);
         }
     }
 }

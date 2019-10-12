@@ -1,4 +1,6 @@
-﻿namespace LogEventArchiver
+﻿using LogEventArchiver.Models;
+
+namespace LogEventArchiver
 {
     public class AppServerEvent : ServerEvent
     {

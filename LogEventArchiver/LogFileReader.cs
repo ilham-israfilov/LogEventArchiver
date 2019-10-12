@@ -1,8 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using LogEventArchiver.Models;
+
 using Newtonsoft.Json.Linq;
+
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace LogEventArchiver
 {
@@ -10,26 +13,53 @@ namespace LogEventArchiver
     {
         private string _logFile;
         private long _alertThreshold;
+        private ConcurrentDictionary<string, ServerEventDto> _tempSavedEvents;
 
         public LogFileReader(string logFile, long alertThreshold)
         {
             _logFile = logFile;
             _alertThreshold = alertThreshold;
+            _tempSavedEvents = new ConcurrentDictionary<string, ServerEventDto>();
         }
 
-        public async void ReadAndParseAsync(BlockingCollection<ServerEvent> events)
+        public Task ReadAllEvents(BlockingCollection<ServerEvent> events)
         {
-            using (var file = File.OpenRead(_logFile))
-            using (var reader = new StreamReader(file, Encoding.ASCII))
+            var runnerTask = new Task(() =>
             {
-                while (!reader.EndOfStream)
+                using (var file = File.OpenRead(_logFile))
+                using (var reader = new StreamReader(file, Encoding.ASCII))
                 {
-                    var line = await reader.ReadLineAsync();
-                    var parserObj = JObject.Parse(line);
-                    var srvEvent = ServerEventFactory.GetServerEvent(parserObj);
-                    events.Add(srvEvent);
+                    while (!reader.EndOfStream)
+                    {
+                        var line = reader.ReadLine();
+                        var srvEventDto = ServerEventDtoFactory.GetServerEventDto(line);
+
+                        if (this.tryGetPairedEvent(srvEventDto, out var pairedSrvEventDto))
+                        {
+                            var srvEvent = ServerEventFactory.GetServerEvent(srvEventDto, pairedSrvEventDto, _alertThreshold);
+                            events.Add(srvEvent);
+                        }
+                    }
                 }
+            });
+
+            runnerTask.Start();
+
+            return runnerTask;
+        }
+
+        private bool tryGetPairedEvent(ServerEventDto eventDto, out ServerEventDto pairedEvent)
+        {
+            if (_tempSavedEvents.TryRemove(eventDto.Id, out pairedEvent))
+                return true;
+
+            if (!_tempSavedEvents.TryAdd(eventDto.Id, eventDto))
+            {
+                if (_tempSavedEvents.TryRemove(eventDto.Id, out pairedEvent))
+                    return true;
             }
+
+            return false;
         }
     }
 }

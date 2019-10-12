@@ -1,4 +1,4 @@
-﻿namespace LogEventArchiver
+﻿namespace LogEventArchiver.Models
 {
     public class ServerEvent
     {

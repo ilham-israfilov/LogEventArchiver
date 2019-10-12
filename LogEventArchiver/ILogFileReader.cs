@@ -1,9 +1,12 @@
-﻿using System.Collections.Concurrent;
+﻿using LogEventArchiver.Models;
+
+using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace LogEventArchiver
 {
     public interface ILogFileReader
     {
-        void ReadAndParseAsync(BlockingCollection<ServerEvent> events);
+        Task ReadAllEvents(BlockingCollection<ServerEvent> events);
     }
 }
