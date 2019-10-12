@@ -1,7 +1,5 @@
 ﻿using LogEventArchiver.Models;
 
-using Newtonsoft.Json.Linq;
-
 using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
