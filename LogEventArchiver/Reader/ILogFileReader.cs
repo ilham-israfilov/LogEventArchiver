@@ -3,7 +3,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
-namespace LogEventArchiver
+namespace LogEventArchiver.Reader
 {
     public interface ILogFileReader
     {

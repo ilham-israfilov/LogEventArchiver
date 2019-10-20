@@ -1,4 +1,5 @@
 ﻿using LogEventArchiver.Models;
+using LogEventArchiver.Reader;
 
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
@@ -15,9 +16,9 @@ namespace LogEventArchiver.IntegrationTests
             string logFilePath = "TestFiles\\LogFileReader_Test_Data.txt";
             var events = new BlockingCollection<ServerEvent>();
 
-            var reader = new LogFileReader(logFilePath, 4L);
-            var readerTask = reader.ReadAllEvents(events);
-            Task.WaitAll(readerTask);
+            var sut = new LogFileReader(logFilePath, 4L);
+            var returnedTask = sut.ReadAllEvents(events);
+            Task.WaitAll(returnedTask);
 
             Assert.NotEmpty(events);
         }

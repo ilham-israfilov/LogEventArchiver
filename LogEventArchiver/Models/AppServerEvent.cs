@@ -1,6 +1,4 @@
-﻿using LogEventArchiver.Models;
-
-namespace LogEventArchiver
+﻿namespace LogEventArchiver.Models
 {
     public class AppServerEvent : ServerEvent
     {

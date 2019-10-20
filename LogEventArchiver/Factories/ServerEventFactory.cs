@@ -1,7 +1,8 @@
-﻿using System;
-using LogEventArchiver.Models;
+﻿using LogEventArchiver.Models;
 
-namespace LogEventArchiver
+using System;
+
+namespace LogEventArchiver.Factories
 {
     public static class ServerEventFactory
     {

@@ -2,7 +2,7 @@
 
 using Newtonsoft.Json;
 
-namespace LogEventArchiver
+namespace LogEventArchiver.Factories
 {
     public static class ServerEventDtoFactory
     {
